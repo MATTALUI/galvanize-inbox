@@ -6,7 +6,6 @@ class Message extends React.Component{
     super(props);
     this.state = {
       star: 'star fa fa-star-o',
-      tags: this.props.tags,
       readStatus: 'unread',
       selectedStatus: 'unselected',
       bodyStatus: 'hidden'
@@ -38,6 +37,7 @@ class Message extends React.Component{
 
   render(){
     return (
+      <div>
       <div className={`row message ${this.state.readStatus} ${this.state.selectedStatus}`}>
 
         <div className="col-xs-1">
@@ -52,16 +52,17 @@ class Message extends React.Component{
         </div>
 
         <div className="col-xs-11">
-          {this.state.tags.map((tag,index)=>{return <span key={index} className="label label-warning">{tag}</span>})}
+          {this.props.tags.map((tag,index)=>{return <span key={index} className="label label-warning">{tag}</span>})}
           <a onClick={this.toggleBody}>
             {this.props.subject}
           </a>
         </div>
-        <div className={`row ${this.state.bodyStatus}`}>
-          <div className="col-xs-11 col-xs-offset-1 message-body">
-            {this.props.body}
-          </div>
+      </div>
+      <div className={`row message-body ${this.state.bodyStatus}`}>
+        <div className="col-xs-11 col-xs-offset-1">
+          {this.props.body}
         </div>
+      </div>
       </div>
     )
   }
