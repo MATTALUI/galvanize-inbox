@@ -86,14 +86,14 @@ class App extends React.Component{
   deleteSelected = () =>{
     let copy = this.state.posts.slice();
     let keptPosts = copy.filter((post)=>{
-      return this.state.selected.indexOf(post.id) === -1
+      return !post.selected;
     });
     this.setState({posts: keptPosts, selected: []})
   }
   readSelected = ()=>{
     let postsCopy = this.state.posts.slice();
     postsCopy.forEach((post)=>{
-      if(this.state.selected.indexOf(post.id)>-1){
+      if(post.selected){
         post.read = true;
       }
     })
@@ -102,7 +102,7 @@ class App extends React.Component{
   unreadSelected = ()=>{
     let postsCopy = this.state.posts.slice();
     postsCopy.forEach((post)=>{
-      if(this.state.selected.indexOf(post.id)>-1){
+      if(post.selected){
         post.read = false;
       }
     })
@@ -111,7 +111,7 @@ class App extends React.Component{
   addTag = (tag)=>{
     let copy = this.state.posts.slice();
     copy.forEach((post)=>{
-      if (this.state.selected.indexOf(post.id)>-1 && post.tags.indexOf(tag)===-1){
+      if (post.selected && post.tags.indexOf(tag)===-1){
         post.tags.push(tag)
       }
     });
@@ -120,7 +120,7 @@ class App extends React.Component{
   removeTag = (tag)=>{
     let copy = this.state.posts.slice();
     copy.forEach((post)=>{
-      if(this.state.selected.indexOf(post.id)>-1 && post.tags.indexOf(tag)>-1){
+      if(post.selected && post.tags.indexOf(tag)>-1){
         let index = post.tags.indexOf(tag);
         post.tags.splice(index, 1);
       }
@@ -135,14 +135,20 @@ class App extends React.Component{
   }
   bulkSelect = () =>{
     let copy = this.state.posts.slice();
-    let selected = copy.filter((post)=>{})
+    let selected = copy.filter((post)=>{return post.selected});
+    if (selected.length < copy.length){
+      copy.forEach((post)=>{post.selected=true});
+    }else{
+      copy.forEach((post)=>{post.selected=false});
+    }
+    this.setState({posts: copy})
   }
 
 
   render(){
     return (
       <div>
-        <Toolbar selected={this.state.selected} makeNew={this.makeNew} posts={this.state.posts} deleteSelected={this.deleteSelected} readSelected={this.readSelected} unreadSelected={this.unreadSelected} addTag={this.addTag} removeTag={this.removeTag} bulkSelect={this.bulkSelect}/>
+        <Toolbar makeNew={this.makeNew} posts={this.state.posts} deleteSelected={this.deleteSelected} readSelected={this.readSelected} unreadSelected={this.unreadSelected} addTag={this.addTag} removeTag={this.removeTag} bulkSelect={this.bulkSelect}/>
         <Compose handler={this.addPost} visible={this.state.makingNew?null:'hidden'}/>
         <MessageList posts={this.state.posts} readBubbler={this.readBubbler} selectBubbler={this.selectBubbler} toggleStarred={this.toggleStarred}/>
       </div>

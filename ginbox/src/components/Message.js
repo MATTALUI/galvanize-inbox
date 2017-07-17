@@ -31,8 +31,7 @@ class Message extends React.Component{
       <div className={`row message ${this.props.read?'read':'unread'} ${this.props.selected?'selected':null}`}>
         <div className="col-xs-1">
           <div className="row">
-            <div className="col-xs-2">
-              <input type="checkbox" onChange={this.toggleSelected} defaultChecked={this.props.selected}/>
+            <div className="col-xs-2"><input type="checkbox" onChange={this.toggleSelected} checked={this.props.selected}/>
             </div>
             <div className="col-xs-2">
               <i className={this.props.starred?'star fa fa-star':'star fa fa-star-o'} onClick={this.toggleStarred}></i>

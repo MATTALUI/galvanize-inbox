@@ -2,6 +2,7 @@ import React from 'react';
 
 
 class Toolbar extends React.Component{
+
   addTag = (event)=>{
     this.props.addTag(event.target.value)
   }
@@ -11,6 +12,13 @@ class Toolbar extends React.Component{
 
   render(){
     let unread = this.props.posts.filter((post)=>{return !post.read}).length;
+    let allSelected = [];
+    for (let i = 0; i < this.props.posts.length;i++){
+      if (this.props.posts[i].selected){
+        allSelected.push(this.props.posts[i])
+      }
+    }
+    let selected = allSelected.length;
     return (
       <div className="row toolbar">
   <div className="col-md-12">
@@ -24,14 +32,14 @@ class Toolbar extends React.Component{
     </a>
 
     <button className="btn btn-default"  onClick={this.props.bulkSelect}>
-      <i className={this.props.selected.length===0?"fa fa-square-o":this.props.selected.length===this.props.posts.length?"fa fa-check-square-o":"fa fa-minus-square-o"}></i>
+      <i className={selected===0?"fa fa-square-o":selected===this.props.posts.length?"fa fa-check-square-o":"fa fa-minus-square-o"}></i>
     </button>
 
-    <button className="btn btn-default" disabled={this.props.selected.length===0?'disabled':null} onClick={this.props.readSelected}>Mark As Read</button>
+    <button className="btn btn-default" disabled={selected===0?'disabled':null} onClick={this.props.readSelected}>Mark As Read</button>
 
-    <button className="btn btn-default" disabled={this.props.selected.length===0?'disabled':null} onClick={this.props.unreadSelected}>Mark As Unread</button>
+    <button className="btn btn-default" disabled={selected===0?'disabled':null} onClick={this.props.unreadSelected}>Mark As Unread</button>
 
-    <select className="form-control label-select" disabled={this.props.selected.length===0?'disabled':null} onChange={this.addTag}>
+    <select className="form-control label-select" disabled={selected===0?'disabled':null} onChange={this.addTag}>
       <option>Apply label</option>
       <option value="Dev">Dev</option>
       <option value="Personal">Personal</option>
@@ -39,7 +47,7 @@ class Toolbar extends React.Component{
       <option value="New">New</option>
     </select>
 
-    <select className="form-control label-select" disabled={this.props.selected.length===0?'disabled':null} onChange={this.removeTag}>
+    <select className="form-control label-select" disabled={selected===0?'disabled':null} onChange={this.removeTag}>
       <option>Remove label</option>
       <option value="Dev">Dev</option>
       <option value="Personal">Personal</option>
@@ -47,7 +55,7 @@ class Toolbar extends React.Component{
       <option value="New">New</option>
     </select>
 
-    <button className="btn btn-default" onClick={this.props.deleteSelected} disabled={this.props.selected.length===0?'disabled':null}>
+    <button className="btn btn-default" onClick={this.props.deleteSelected} disabled={selected===0?'disabled':null}>
       <i className="fa fa-trash-o"></i>
     </button>
   </div>
