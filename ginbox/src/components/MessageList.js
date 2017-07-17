@@ -16,7 +16,7 @@ class MessageList extends React.Component{
   render(){
     const listOfPosts = this.props.posts.map((post)=>{
       return (
-        <Message key={post.id} id={post.id} subject={post.subject} body={post.body} tags={post.tags} read={post.read} readBubbler={this.readBubbler} selectBubbler={this.selectBubbler} starred={post.starred} toggleStarred={this.toggleStarred}/>
+        <Message key={post.id} id={post.id} subject={post.subject} body={post.body} tags={post.tags} read={post.read} readBubbler={this.readBubbler} selectBubbler={this.selectBubbler} starred={post.starred} toggleStarred={this.toggleStarred} selected={post.selected}/>
       )
     })
     return (

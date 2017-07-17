@@ -10,7 +10,8 @@ const posts = [
     body: 'What a beautiful day it is!',
     tags: ['New'],
     read: false,
-    starred: true
+    starred: true,
+    selected: false
   },
   {
     id: 2,
@@ -18,7 +19,8 @@ const posts = [
     body: 'Why did you have to go and kill me?',
     tags: ['Old', 'Dead Guy'],
     read: false,
-    starred: false
+    starred: false,
+    selected: false
   },
   {
     id: 3,
@@ -26,7 +28,8 @@ const posts = [
     body: 'This guy that we stabbed has been here for weeks, will someone come and get him?',
     tags: [],
     read: true,
-    starred: true
+    starred: true,
+    selected: false
   },
   {
     id: 4,
@@ -34,7 +37,8 @@ const posts = [
     body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem Lorem Lorem Lorem ',
     tags: ['Lots', 'Of', 'Tags'],
     read: false,
-    starred: false
+    starred: false,
+    selected: false
   }
 ];
 // <MessageList posts={posts}/>
@@ -55,6 +59,7 @@ class App extends React.Component{
     newPost.id = greatest+1;
     newPost.tags = [];
     newPost.read = false;
+    newPost.selected = false;
     copy.push(newPost);
     this.setState({posts: copy, makingNew:false});
   }
@@ -73,15 +78,10 @@ class App extends React.Component{
     this.setState({posts: copy});
   }
   selectBubbler = (id)=>{
-    let copy = this.state.selected.slice();
-    if (this.state.selected.indexOf(id) > -1){
-      let index = copy.indexOf(id)
-      copy.splice(index, 1);
-      this.setState({selected: copy});
-    }else{
-      copy.push(id);
-      this.setState({selected: copy})
-    }
+    let copy = this.state.posts.slice();
+    let post = copy.find((post)=>{return post.id===id});
+    post.selected?post.selected=false:post.selected=true;
+    this.setState({posts: copy})
   }
   deleteSelected = () =>{
     let copy = this.state.posts.slice();
@@ -133,12 +133,16 @@ class App extends React.Component{
     post.starred?post.starred = false:post.starred = true;
     this.setState({posts: copy})
   }
+  bulkSelect = () =>{
+    let copy = this.state.posts.slice();
+    let selected = copy.filter((post)=>{})
+  }
 
 
   render(){
     return (
       <div>
-        <Toolbar selected={this.state.selected} makeNew={this.makeNew} posts={this.state.posts} deleteSelected={this.deleteSelected} readSelected={this.readSelected} unreadSelected={this.unreadSelected} addTag={this.addTag} removeTag={this.removeTag}/>
+        <Toolbar selected={this.state.selected} makeNew={this.makeNew} posts={this.state.posts} deleteSelected={this.deleteSelected} readSelected={this.readSelected} unreadSelected={this.unreadSelected} addTag={this.addTag} removeTag={this.removeTag} bulkSelect={this.bulkSelect}/>
         <Compose handler={this.addPost} visible={this.state.makingNew?null:'hidden'}/>
         <MessageList posts={this.state.posts} readBubbler={this.readBubbler} selectBubbler={this.selectBubbler} toggleStarred={this.toggleStarred}/>
       </div>

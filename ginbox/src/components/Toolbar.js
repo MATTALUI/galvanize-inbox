@@ -23,7 +23,7 @@ class Toolbar extends React.Component{
       <i className="fa fa-plus"></i>
     </a>
 
-    <button className="btn btn-default">
+    <button className="btn btn-default"  onClick={this.props.bulkSelect}>
       <i className={this.props.selected.length===0?"fa fa-square-o":this.props.selected.length===this.props.posts.length?"fa fa-check-square-o":"fa fa-minus-square-o"}></i>
     </button>
 

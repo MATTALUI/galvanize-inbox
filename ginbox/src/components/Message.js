@@ -5,8 +5,6 @@ class Message extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      readStatus: props.read,
-      selectedStatus: 'unselected',
       bodyStatus: 'hidden'
     };
   }
@@ -15,12 +13,6 @@ class Message extends React.Component{
   }
   toggleSelected = () =>{
     this.props.selectBubbler(this.props.id);
-    if (this.state.selectedStatus === 'selected'){
-      this.setState({selectedStatus: 'unselected'});
-
-    }else{
-      this.setState({selectedStatus: 'selected'});
-    }
   }
   toggleBody = () =>{
     if (this.state.bodyStatus ==='hidden'){
@@ -35,12 +27,12 @@ class Message extends React.Component{
 
   render(){
     return (
-      <div>
-      <div className={`row message ${this.props.read?'read':'unread'} ${this.state.selectedStatus}`}>
+      <div className="container-fluid">
+      <div className={`row message ${this.props.read?'read':'unread'} ${this.props.selected?'selected':null}`}>
         <div className="col-xs-1">
           <div className="row">
             <div className="col-xs-2">
-              <input type="checkbox" onClick={this.toggleSelected}/>
+              <input type="checkbox" onChange={this.toggleSelected} defaultChecked={this.props.selected}/>
             </div>
             <div className="col-xs-2">
               <i className={this.props.starred?'star fa fa-star':'star fa fa-star-o'} onClick={this.toggleStarred}></i>
