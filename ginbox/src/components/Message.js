@@ -5,21 +5,16 @@ class Message extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      star: 'star fa fa-star-o',
-      readStatus: 'unread',
+      readStatus: props.read,
       selectedStatus: 'unselected',
       bodyStatus: 'hidden'
     };
   }
   toggleStarred = ()=>{
-    if (this.state.star === 'star fa fa-star'){
-      this.setState({star: 'star fa fa-star-o'});
-
-    }else{
-      this.setState({star: 'star fa fa-star'});
-    }
+    this.props.toggleStarred(this.props.id);
   }
   toggleSelected = () =>{
+    this.props.selectBubbler(this.props.id);
     if (this.state.selectedStatus === 'selected'){
       this.setState({selectedStatus: 'unselected'});
 
@@ -29,7 +24,10 @@ class Message extends React.Component{
   }
   toggleBody = () =>{
     if (this.state.bodyStatus ==='hidden'){
-      this.setState({bodyStatus: 'show', readStatus: 'read'});
+      this.setState({bodyStatus: 'show'});
+      if(!this.props.read){
+        this.props.readBubbler(this.props.id);
+      }
     }else{
       this.setState({bodyStatus: 'hidden'});
     }
@@ -38,15 +36,14 @@ class Message extends React.Component{
   render(){
     return (
       <div>
-      <div className={`row message ${this.state.readStatus} ${this.state.selectedStatus}`}>
-
+      <div className={`row message ${this.props.read?'read':'unread'} ${this.state.selectedStatus}`}>
         <div className="col-xs-1">
           <div className="row">
             <div className="col-xs-2">
               <input type="checkbox" onClick={this.toggleSelected}/>
             </div>
             <div className="col-xs-2">
-              <i className={this.state.star} onClick={this.toggleStarred}></i>
+              <i className={this.props.starred?'star fa fa-star':'star fa fa-star-o'} onClick={this.toggleStarred}></i>
             </div>
           </div>
         </div>
