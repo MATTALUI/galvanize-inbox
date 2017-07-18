@@ -3,7 +3,7 @@ import React from 'react';
 import MessageList from './MessageList.js';
 import Toolbar from './Toolbar.js';
 import Compose  from './Compose.js';
-const posts = [
+/*const posts = [
   {
     id: 1,
     subject: 'Hello World',
@@ -41,27 +41,39 @@ const posts = [
     selected: false
   }
 ];
-// <MessageList posts={posts}/>
-
+<MessageList posts={posts}/>
+*/
 
 class App extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      posts: posts,
+      posts: [],
       makingNew: false,
       selected: []
     }
   }
-  addPost = (newPost)=>{
+  async componentDidMount (){
+    const response = await fetch('http://localhost:8181/api/messages');
+    const json = await response.json();
+    const messages = json._embedded.messages;
+    messages.forEach((post)=>{post.selected=false})
+    this.setState({posts: messages});
+  }
+  addPost = async (newPost)=>{
+    const response = await fetch('http://localhost:8181/api/messages',{
+      method: 'POST',
+      body: JSON.stringify(newPost),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }});
+    const json = await response.json();
+    delete json._links;
+    json.selected = false;
     let copy = this.state.posts.slice();
-    let greatest = copy.map(post=>post.id).reduce((a,b)=>a>b?a:b);
-    newPost.id = greatest+1;
-    newPost.tags = [];
-    newPost.read = false;
-    newPost.selected = false;
-    copy.push(newPost);
-    this.setState({posts: copy, makingNew:false});
+    copy.push(json);
+    this.setState({posts: copy, makingNew:false})
   }
   makeNew = () =>{
     if(this.state.makingNew){
@@ -70,12 +82,26 @@ class App extends React.Component{
       this.setState({makingNew: true});
     }
   }
-  readBubbler=(id)=>{
+  readBubbler= async (id)=>{
     let copy = this.state.posts.slice();
     let correspondingPost = copy.find(post=>post.id===id);
     let index = copy.indexOf(correspondingPost);
     copy[index].read = true;
     this.setState({posts: copy});
+    let data = {
+      messageIds: [id],
+      command: 'read',
+      read: true
+    }
+    console.log(data);
+    fetch('http://localhost:8181/api/messages',{
+      method: 'PATCH',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    })
   }
   selectBubbler = (id)=>{
     let copy = this.state.posts.slice();
@@ -83,12 +109,24 @@ class App extends React.Component{
     post.selected?post.selected=false:post.selected=true;
     this.setState({posts: copy})
   }
-  deleteSelected = () =>{
+  deleteSelected = async () =>{
     let copy = this.state.posts.slice();
-    let keptPosts = copy.filter((post)=>{
-      return !post.selected;
-    });
-    this.setState({posts: keptPosts, selected: []})
+    let keptPosts = [];
+    let selected = [];
+    copy.forEach((post)=>{post.selected?selected.push(post.id):keptPosts.push(post)});
+    let data = {
+      messageIds: selected,
+      command: 'delete'
+    }
+    fetch('http://localhost:8181/api/messages', {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    })
+    this.setState({posts: keptPosts})
   }
   readSelected = ()=>{
     let postsCopy = this.state.posts.slice();
@@ -111,8 +149,8 @@ class App extends React.Component{
   addTag = (tag)=>{
     let copy = this.state.posts.slice();
     copy.forEach((post)=>{
-      if (post.selected && post.tags.indexOf(tag)===-1){
-        post.tags.push(tag)
+      if (post.selected && post.labels.indexOf(tag)===-1){
+        post.labels.push(tag)
       }
     });
     this.setState({post: copy});
@@ -120,9 +158,9 @@ class App extends React.Component{
   removeTag = (tag)=>{
     let copy = this.state.posts.slice();
     copy.forEach((post)=>{
-      if(post.selected && post.tags.indexOf(tag)>-1){
-        let index = post.tags.indexOf(tag);
-        post.tags.splice(index, 1);
+      if(post.selected && post.labels.indexOf(tag)>-1){
+        let index = post.labels.indexOf(tag);
+        post.labels.splice(index, 1);
       }
     });
     this.setState({posts: copy})

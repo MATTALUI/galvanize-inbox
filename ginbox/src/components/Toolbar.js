@@ -41,18 +41,18 @@ class Toolbar extends React.Component{
 
     <select className="form-control label-select" disabled={selected===0?'disabled':null} onChange={this.addTag}>
       <option>Apply label</option>
-      <option value="Dev">Dev</option>
-      <option value="Personal">Personal</option>
-      <option value="Gschool">Gschool</option>
-      <option value="New">New</option>
+      <option value="dev">Dev</option>
+      <option value="personal">Personal</option>
+      <option value="gschool">Gschool</option>
+      <option value="new">New</option>
     </select>
 
     <select className="form-control label-select" disabled={selected===0?'disabled':null} onChange={this.removeTag}>
       <option>Remove label</option>
-      <option value="Dev">Dev</option>
-      <option value="Personal">Personal</option>
-      <option value="Gschool">Gschool</option>
-      <option value="New">New</option>
+      <option value="dev">Dev</option>
+      <option value="personal">Personal</option>
+      <option value="gschool">Gschool</option>
+      <option value="new">New</option>
     </select>
 
     <button className="btn btn-default" onClick={this.props.deleteSelected} disabled={selected===0?'disabled':null}>

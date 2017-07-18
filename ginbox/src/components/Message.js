@@ -40,13 +40,14 @@ class Message extends React.Component{
         </div>
 
         <div className="col-xs-11">
-          {this.props.tags.map((tag,index)=>{return <span key={index} className="label label-warning">{tag}</span>})}
+          {this.props.labels.map((tag,index)=>{return <span key={index} className="label label-warning">{tag}</span>})}
           <a onClick={this.toggleBody}>
             {this.props.subject}
           </a>
         </div>
       </div>
-      <div className={`row message-body ${this.state.bodyStatus}`}>
+      <div className={'hidden'}>
+      {`row message-body ${this.state.bodyStatus}`}
         <div className="col-xs-11 col-xs-offset-1">
           {this.props.body}
         </div>
