@@ -75,6 +75,16 @@ class App extends React.Component{
     copy.push(json);
     this.setState({posts: copy, makingNew:false})
   }
+  patchFetcher = async (data)=>{
+    fetch('http://localhost:8181/api/messages',{
+      method: 'PATCH',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    })
+  }
   makeNew = () =>{
     if(this.state.makingNew){
       this.setState({makingNew: false});
@@ -93,14 +103,7 @@ class App extends React.Component{
       command: 'read',
       read: true
     }
-    fetch('http://localhost:8181/api/messages',{
-      method: 'PATCH',
-      body: JSON.stringify(data),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
-    })
+    this.patchFetcher(data);
   }
   selectBubbler = (id)=>{
     let copy = this.state.posts.slice();
@@ -117,14 +120,7 @@ class App extends React.Component{
       messageIds: selected,
       command: 'delete'
     }
-    fetch('http://localhost:8181/api/messages', {
-      method: 'PATCH',
-      body: JSON.stringify(data),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
-    })
+    this.patchFetcher(data);
     this.setState({posts: keptPosts})
   }
   readSelected = async ()=>{
@@ -166,38 +162,55 @@ class App extends React.Component{
       command: 'read',
       read: false
     }
-    fetch('http://localhost:8181/api/messages',{
-      method: 'PATCH',
-      body: JSON.stringify(data),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
-    })
+    this.patchFetcher(data);
   }
-  addTag = (tag)=>{
+  addTag = async (tag)=>{
     let copy = this.state.posts.slice();
+    let selected = [];
     copy.forEach((post)=>{
       if (post.selected && post.labels.indexOf(tag)===-1){
-        post.labels.push(tag)
+        post.labels.push(tag);
+        selected.push(post.id);
       }
     });
+    let data = {
+      messageIds: selected,
+      command: 'addLabel',
+      label: tag
+    }
+    this.patchFetcher(data);
     this.setState({post: copy});
   }
-  removeTag = (tag)=>{
+  removeTag = async (tag)=>{
     let copy = this.state.posts.slice();
+    let selected = [];
     copy.forEach((post)=>{
       if(post.selected && post.labels.indexOf(tag)>-1){
+        selected.push(post.id);
         let index = post.labels.indexOf(tag);
         post.labels.splice(index, 1);
       }
     });
-    this.setState({posts: copy})
+    let data ={
+      messageIds: selected,
+      command: 'removeLabel',
+      label: tag
+    }
+    this.patchFetcher(data);
+    this.setState({posts: copy});
   }
   toggleStarred=(id)=>{
     let copy = this.state.posts.slice();
     let post = copy.find((post)=>{return post.id === id});
-    post.starred?post.starred = false:post.starred = true;
+    let swapTo
+    post.starred?swapTo=false:swapTo=true;
+    post.starred = swapTo;
+    let data = {
+      messageIds: [id],
+      command: 'star',
+      star: swapTo
+    }
+    this.patchFetcher(data)
     this.setState({posts: copy})
   }
   bulkSelect = () =>{
