@@ -93,7 +93,6 @@ class App extends React.Component{
       command: 'read',
       read: true
     }
-    console.log(data);
     fetch('http://localhost:8181/api/messages',{
       method: 'PATCH',
       body: JSON.stringify(data),
@@ -128,14 +127,29 @@ class App extends React.Component{
     })
     this.setState({posts: keptPosts})
   }
-  readSelected = ()=>{
+  readSelected = async ()=>{
     let postsCopy = this.state.posts.slice();
+    let selected = [];
     postsCopy.forEach((post)=>{
       if(post.selected){
         post.read = true;
+        selected.push(post.id)
       }
     })
     this.setState({posts: postsCopy});
+    let data = {
+      messageIds: selected,
+      command: 'read',
+      read: true
+    }
+    fetch('http://localhost:8181/api/messages',{
+      method: 'PATCH',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    })
   }
   unreadSelected = ()=>{
     let postsCopy = this.state.posts.slice();
