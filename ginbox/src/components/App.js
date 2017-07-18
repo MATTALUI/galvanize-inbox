@@ -151,14 +151,29 @@ class App extends React.Component{
       }
     })
   }
-  unreadSelected = ()=>{
+  unreadSelected = async ()=>{
     let postsCopy = this.state.posts.slice();
+    let selected = [];
     postsCopy.forEach((post)=>{
       if(post.selected){
         post.read = false;
+        selected.push(post.id)
       }
     })
     this.setState({posts: postsCopy});
+    let data = {
+      messageIds: selected,
+      command: 'read',
+      read: false
+    }
+    fetch('http://localhost:8181/api/messages',{
+      method: 'PATCH',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    })
   }
   addTag = (tag)=>{
     let copy = this.state.posts.slice();
