@@ -3,7 +3,7 @@ import React from 'react';
 import MessageList from './MessageList.js';
 import Toolbar from './Toolbar.js';
 import Compose  from './Compose.js';
-/*const posts = [
+const posts = [
   {
     id: 1,
     subject: 'Hello World',
@@ -42,13 +42,13 @@ import Compose  from './Compose.js';
   }
 ];
 <MessageList posts={posts}/>
-*/
+
 
 class App extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      posts: [],
+      posts: posts,
       makingNew: false,
       selected: []
     }
@@ -61,18 +61,21 @@ class App extends React.Component{
     this.setState({posts: messages});
   }
   addPost = async (newPost)=>{
-    const response = await fetch('http://localhost:8181/api/messages',{
-      method: 'POST',
-      body: JSON.stringify(newPost),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }});
-    const json = await response.json();
-    delete json._links;
-    json.selected = false;
+    // const response = await fetch('http://localhost:8181/api/messages',{
+    //   method: 'POST',
+    //   body: JSON.stringify(newPost),
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'Accept': 'application/json'
+    //   }});
+    // const json = await response.json();
+    // delete json._links;
+    // json.selected = false;
+    newPost.selected = false;
+    newPost.tags = [];
+    newPost.read = false;
     let copy = this.state.posts.slice();
-    copy.push(json);
+    copy.push(newPost);
     this.setState({posts: copy, makingNew:false})
   }
   patchFetcher = async (data)=>{

@@ -46,8 +46,7 @@ class Message extends React.Component{
           </a>
         </div>
       </div>
-      <div className={'hidden'}>
-      {`row message-body ${this.state.bodyStatus}`}
+      <div className={`row message-body ${this.state.bodyStatus}`}>
         <div className="col-xs-11 col-xs-offset-1">
           {this.props.body}
         </div>
